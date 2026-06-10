@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoMarketer AI - Instant AI Marketing Campaigns</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Gradients -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                <div>
+                    <h1>AutoMarketer <span class="gradient-text">AI</span></h1>
+                    <p class="subtitle">Turn any URL into a high-converting marketing campaign instantly</p>
+                </div>
+            </div>
+            <div class="header-badge">
+                <span class="status-indicator-dot"></span>
+                <span>Gemini & HF Powered</span>
+            </div>
+        </header>
+
+        <!-- Main Grid Layout -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Panel: Input & Generation Results -->
+            <section class="panel main-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-circle-plus icon-purple"></i> Create Campaign</h2>
+                </div>
+                
+                <!-- URL Generator Form -->
+                <form id="generator-form" class="generator-form">
+                    <div class="input-group">
+                        <i class="fa-solid fa-link input-icon"></i>
+                        <input type="url" id="url-input" placeholder="Enter website URL (e.g. https://stripe.com)" required>
+                    </div>
+                    <button type="submit" id="generate-btn" class="btn btn-primary">
+                        <span>Generate Campaign</span>
+                        <i class="fa-solid fa-arrow-right button-arrow"></i>
+                    </button>
+                </form>
+
+                <!-- Processing / Loading Overlay (Hidden by Default) -->
+                <div id="loading-state" class="loading-state hidden">
+                    <div class="loader-spinner-container">
+                        <div class="loader-ring"></div>
+                        <div class="loader-center-icon"><i class="fa-solid fa-robot pulse"></i></div>
+                    </div>
+                    <h3 id="loader-title">Analyzing Website...</h3>
+                    <p id="loader-subtitle">Scraping text and extracting brand elements.</p>
+                    
+                    <!-- Progress Steps -->
+                    <div class="progress-steps">
+                        <div class="step" id="step-scrape">
+                            <span class="step-check"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                            <span class="step-label">Web Scraper</span>
+                        </div>
+                        <div class="step" id="step-caption">
+                            <span class="step-check"><i class="fa-regular fa-circle"></i></span>
+                            <span class="step-label">Gemini Copywriting</span>
+                        </div>
+                        <div class="step" id="step-prompt">
+                            <span class="step-check"><i class="fa-regular fa-circle"></i></span>
+                            <span class="step-label">Art Direction Prompting</span>
+                        </div>
+                        <div class="step" id="step-image">
+                            <span class="step-check"><i class="fa-regular fa-circle"></i></span>
+                            <span class="step-label">Hugging Face Rendering</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State (Shown when no campaign is loaded) -->
+                <div id="empty-state" class="empty-state">
+                    <div class="empty-illustration">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <h3>No Campaign Generated Yet</h3>
+                    <p>Provide a URL above to crawl a website and generate a complete marketing banner and caption.</p>
+                </div>
+
+                <!-- Results Display Workspace (Hidden by Default) -->
+                <div id="results-workspace" class="results-workspace hidden">
+                    <div class="website-meta">
+                        <div class="meta-label">Source URL</div>
+                        <a id="res-website-link" href="#" target="_blank" class="meta-value-link">
+                            <span id="res-website-title">Website Title</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+
+                    <div class="result-section">
+                        <div class="section-label">
+                            <span><i class="fa-solid fa-quote-left icon-cyan"></i> Generated Marketing Caption</span>
+                            <button class="btn-copy" onclick="copyText('res-caption')">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <blockquote id="res-caption" class="caption-text">
+                            Dynamic marketing caption will display here.
+                        </blockquote>
+                    </div>
+
+                    <div class="result-section">
+                        <div class="section-label">
+                            <span><i class="fa-solid fa-palette icon-purple"></i> Image Generation Prompt</span>
+                            <button class="btn-copy" onclick="copyText('res-prompt')">
+                                <i class="fa-regular fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="prompt-box">
+                            <code id="res-prompt">Dynamic prompt description will display here.</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Middle/Right Panel: Image Preview & Details -->
+            <section class="panel preview-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-image icon-cyan"></i> Campaign Asset</h2>
+                </div>
+                
+                <div class="image-preview-container">
+                    <!-- Placeholder Frame -->
+                    <div id="img-placeholder" class="img-placeholder">
+                        <i class="fa-regular fa-images"></i>
+                        <p>Asset preview will load here</p>
+                    </div>
+                    
+                    <!-- Real Image Frame (Hidden initially) -->
+                    <div id="img-display-wrapper" class="img-display-wrapper hidden">
+                        <img id="res-image" src="" alt="AI Generated Campaign Asset">
+                        <div class="image-actions">
+                            <a id="download-image-btn" href="#" download class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-download"></i> Download Image
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Sidebar: History Panel -->
+            <section class="panel history-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-clock-rotate-left icon-orange"></i> Campaign History</h2>
+                    <span id="history-count" class="badge">0</span>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- Dynamic history cards inserted here -->
+                    <div class="history-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Loading history...
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Notification Toast System -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Script file -->
+    <script src="app.js"></script>
+</body>
+</html>
