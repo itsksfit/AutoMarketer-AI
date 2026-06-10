@@ -18,6 +18,7 @@ const resCaption = document.getElementById('res-caption');
 const resPrompt = document.getElementById('res-prompt');
 const resImage = document.getElementById('res-image');
 const downloadImageBtn = document.getElementById('download-image-btn');
+const deleteCampaignBtn = document.getElementById('delete-campaign-btn');
 const historyList = document.getElementById('history-list');
 const historyCount = document.getElementById('history-count');
 const loaderTitle = document.getElementById('loader-title');
@@ -43,6 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
             generateCampaign(url);
         }
     });
+
+    // Delete Button Listener
+    if (deleteCampaignBtn) {
+        deleteCampaignBtn.addEventListener('click', () => {
+            if (activeCampaignId) {
+                deleteCampaign(activeCampaignId);
+            }
+        });
+    }
 });
 
 // Toast Notification Helper
@@ -302,5 +312,40 @@ async function generateCampaign(url) {
         urlInput.value = '';
         generateBtn.disabled = false;
         generateBtn.querySelector('span').textContent = 'Generate Campaign';
+    }
+}
+
+// Delete Campaign Handler
+async function deleteCampaign(campaignId) {
+    if (!confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/campaigns/${campaignId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.detail || 'Failed to delete campaign.');
+        }
+        
+        showToast('Campaign deleted successfully.', 'success');
+        
+        // Reset workspace to empty state if the deleted campaign was active
+        if (activeCampaignId === campaignId) {
+            activeCampaignId = null;
+            resultsWorkspace.classList.add('hidden');
+            imgDisplayWrapper.classList.add('hidden');
+            imgPlaceholder.classList.remove('hidden');
+            emptyState.classList.remove('hidden');
+        }
+        
+        // Refresh history list
+        await fetchHistory();
+    } catch (err) {
+        console.error(err);
+        showToast(err.message || 'An unexpected error occurred while deleting the campaign.', 'error');
     }
 }

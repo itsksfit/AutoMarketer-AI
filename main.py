@@ -15,6 +15,7 @@ from database import (
     insert_campaign,
     get_all_campaigns,
     get_campaign_by_id,
+    delete_campaign_by_id,
     DatabaseError
 )
 from scraper import scrape_website
@@ -224,3 +225,41 @@ async def get_campaign(id: str):
         "image_url": campaign["generated_image_path"],
         "created_at": campaign["created_at"]
     }
+
+@app.delete("/campaigns/{id}")
+async def delete_campaign(id: str):
+    """
+    Deletes the campaign and its associated image file.
+    """
+    logger.info(f"Received request to delete campaign ID: {id}")
+    campaign = await get_campaign_by_id(id)
+    if not campaign:
+        logger.warning(f"Campaign with ID {id} not found for deletion.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Campaign with ID {id} not found."
+        )
+    
+    # Delete image file from local folder
+    image_url = campaign.get("generated_image_path")
+    if image_url:
+        local_image_path = image_url.lstrip("/")
+        if os.path.exists(local_image_path):
+            try:
+                os.remove(local_image_path)
+                logger.info(f"Successfully deleted local image file: {local_image_path}")
+            except Exception as e:
+                logger.error(f"Failed to delete local image file {local_image_path}: {str(e)}")
+        else:
+            logger.warning(f"Image file {local_image_path} not found on disk.")
+            
+    # Delete from database
+    deleted = await delete_campaign_by_id(id)
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete campaign from database."
+        )
+        
+    logger.info(f"Successfully deleted campaign ID: {id}")
+    return {"status": "success", "message": f"Campaign {id} has been deleted."}

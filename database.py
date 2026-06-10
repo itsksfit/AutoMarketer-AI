@@ -197,3 +197,28 @@ async def get_campaign_by_id(campaign_id: str) -> Optional[dict]:
     except Exception as e:
         logger.error(f"Error fetching campaign by ID: {str(e)}")
         raise DatabaseError(f"Database error during fetch by ID: {str(e)}")
+
+async def delete_campaign_by_id(campaign_id: str) -> bool:
+    """Deletes a specific campaign by its ID string. Returns True if deleted, False otherwise."""
+    if use_mock_db:
+        logger.info(f"[Mock DB] Deleting campaign by ID: {campaign_id}")
+        db_data = load_mock_db()
+        original_length = len(db_data)
+        db_data = [doc for doc in db_data if str(doc.get("_id")) != campaign_id]
+        if len(db_data) < original_length:
+            save_mock_db(db_data)
+            return True
+        return False
+        
+    try:
+        database = get_db()
+        obj_id = ObjectId(campaign_id)
+        result = await database.campaigns.delete_one({"_id": obj_id})
+        return result.deleted_count > 0
+    except InvalidId:
+        logger.warning(f"Invalid campaign ID format for deletion: {campaign_id}")
+        return False
+    except Exception as e:
+        logger.error(f"Error deleting campaign by ID: {str(e)}")
+        raise DatabaseError(f"Database error during deletion by ID: {str(e)}")
+
