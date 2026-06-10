@@ -18,7 +18,7 @@ from database import (
     DatabaseError
 )
 from scraper import scrape_website
-from llm import generate_marketing_caption, generate_image_prompt, generate_search_keywords, GeminiError
+from llm import generate_marketing_caption, generate_image_prompt, generate_search_keywords, LLMError
 from image_generator import generate_and_save_image, ImageGeneratorError
 
 # Load environment variables
@@ -37,7 +37,7 @@ logger = logging.getLogger("automarketer")
 
 app = FastAPI(
     title="AutoMarketer AI API",
-    description="Automated digital marketing campaigns using Gemini and Hugging Face",
+    description="Automated digital marketing campaigns using Groq and Hugging Face",
     version="1.0.0"
 )
 
@@ -76,9 +76,9 @@ async def database_exception_handler(request, exc):
         content={"detail": f"Database Connection Error: {str(exc)}"}
     )
 
-@app.exception_handler(GeminiError)
-async def gemini_exception_handler(request, exc):
-    logger.error(f"Gemini Exception handler caught: {str(exc)}")
+@app.exception_handler(LLMError)
+async def llm_exception_handler(request, exc):
+    logger.error(f"LLM Exception handler caught: {str(exc)}")
     return JSONResponse(
         status_code=status.HTTP_502_BAD_GATEWAY,
         content={"detail": f"LLM Generation Error: {str(exc)}"}

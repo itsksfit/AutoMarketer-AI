@@ -7,12 +7,9 @@ load_dotenv()
 
 logger = logging.getLogger("automarketer")
 
-class GeminiError(Exception):
-    """Custom exception for LLM related failures. Re-uses name to preserve compatibility with main.py."""
+class LLMError(Exception):
+    """Custom exception for LLM related failures."""
     pass
-
-# Alias for code clarity
-LLMError = GeminiError
 
 def generate_marketing_caption(page_content: str) -> str:
     """
