@@ -1,5 +1,7 @@
 # AutoMarketer AI
 
+🚀 **Live Demo**: [https://automarketer-ai.onrender.com/](https://automarketer-ai.onrender.com/)
+
 AutoMarketer AI is a production-ready, full-stack marketing automation application. By providing a single website URL, the application scrapes the webpage, extracts its core brand messaging, uses the **Groq API** to generate a professional marketing caption and a structured image-generation prompt, renders a premium promotional graphic using Hugging Face's Image Generation models (with automatic stock photo fallbacks), and saves the complete campaign data in MongoDB.
 
 The application features a modern, responsive dashboard with a premium dark-mode glassmorphic aesthetic, loading state trackers, copy-to-clipboard actions, and a history feed of previous campaigns.
