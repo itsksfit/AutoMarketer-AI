@@ -1,4 +1,4 @@
-# AutoMarketer AI
+### AutoMarketer AI
 
 🚀 **Live Demo**: [https://automarketer-ai.onrender.com/](https://automarketer-ai.onrender.com/)
 
